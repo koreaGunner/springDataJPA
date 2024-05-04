@@ -1,5 +1,8 @@
 package study.datajpa.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -33,4 +36,15 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Member> findListByUsername(String username); //컬렉션 -> !!조회결과가 없더라고 null로 반환하지 않는다(empty collection으로 반환)
     Member findMemberByUsername(String username); //단건 -> !!조회결과가 없으면 null로 반환(JPA는 NoResultException이 뜬다. spring data JPA로 인해서 null 반환)
     Optional<Member> findOptionalByUsername(String username); //단건 Optional -> 단건 조회는 optional이 아니더라도 단건 조회가 아닐때 오류가 뜬다
+
+    //페이징 처리
+    //Page로 받을때는 기본적으로 totalCount를 제공하는데 totalCount 쿼리가 필요없는 경우(성능 이슈) @Query를 사용해 조회 쿼리와 count쿼리 분리
+    //-> 실제 쿼리와 count쿼리 분리 : countQuery를 사용하지 않으면 원래 쿼리의 count를 가져오는데 join이 많을 경우 성능 최적화가 안된다
+    //-> 그런 경우를 대비해 countQuery를 분리할 수 있게 돼있다(실무에서 매우 중요)
+//    @Query(value = "select m from Member m left join m.team t", countQuery = "select count(m) from Member m")
+    Page<Member> findByAge(int age, Pageable pageable);
+
+    //슬라이스
+    Slice<Member> findSliceByAge(int age, Pageable pageable);
+    //-> 페이징 or 슬라이스 대신 List로 받아도 되지만 페이징 관련된 기능은 사용하지못한다(sort 기능만 가능)
 }
