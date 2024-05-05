@@ -11,6 +11,7 @@ import lombok.*;
         name = "Member.findByUsername",
         query = "select m from Member m where m.username = :username"
 ) //@NamedQuery의 장점 : 정적쿼리기 때문에 애플리케이션 로딩 시 파싱을 하는데, 오류가 있으면 컴파일 오류를 낸다
+@NamedEntityGraph(name = "Member.all", attributeNodes = @NamedAttributeNode("team"))
 public class Member {
 
     @Id @GeneratedValue
