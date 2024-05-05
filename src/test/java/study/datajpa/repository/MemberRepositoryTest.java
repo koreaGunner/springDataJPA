@@ -362,4 +362,35 @@ class MemberRepositoryTest {
         }
     }
 
+    @Test
+    public void queryHint() {
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        //when
+        //readOnly로 설정해놨기 때문에 변경감지 체크 자체를 하지 않는다
+        //-> update 쿼리가 나가지 않는다
+        Member findMember = memberRepository.findReadOnlyByUsername("member1");
+        findMember.setUsername("member2");
+
+        em.flush();
+
+    }
+
+    @Test
+    public void lock() {
+        //given
+        Member member1 = memberRepository.save(new Member("member1", 10));
+        em.flush();
+        em.clear();
+
+        //when
+        //readOnly로 설정해놨기 때문에 변경감지 체크 자체를 하지 않는다
+        //-> update 쿼리가 나가지 않는다
+        List<Member> result = memberRepository.findLockByUsername("member1");
+
+    }
+
 }
